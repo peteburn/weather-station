@@ -11,6 +11,8 @@
 float pressure = 0.0;
 float temperature = 0.0;
 float humidity = 0.0;
+float maximum = 0.0;
+float minimum = 0.0;
 
 const uint8_t blank[] = {};
 
@@ -26,26 +28,46 @@ void setup() {
   Serial.begin(9600);
   lcd.begin(20, 4);
   bmp.begin();
+  // Set the initial values.
+  while(temperature == 0) {
+    uint8_t readings=read_dht(temperature, humidity, 2, DHT22);
+  }
+  maximum = temperature;
+  minimum = temperature;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
   uint8_t readings=read_dht(temperature, humidity, 2, DHT22);
   lcd.setCursor(0,0);
-  lcd.print("Temperature: ");
+  lcd.print("Temperature:  ");
   lcd.print((int)temperature);
-  Serial.print(int(temperature));
   lcd.print("C");
+  //Calculate the maximum and minimum.
+  if(temperature > maximum) {
+    maximum = temperature;
+  }
+  if(temperature < minimum) {
+    minimum = temperature;
+  }
   lcd.setCursor(0,1);
-  lcd.print("Humidity:    ");
+  lcd.print("Max: ");
+  lcd.print(int(maximum));
+  lcd.print("C ");
+  lcd.print("Min: ");
+  lcd.print((int)minimum);
+  lcd.print("C");
+  // Now the humidity
+  lcd.setCursor(0,2);
+  lcd.print("Humidity:     ");
   lcd.print((int)humidity);
   lcd.print("%");
   /* Get a new sensor event */ 
   sensors_event_t event;
   bmp.getEvent(&event);
   pressure = (int)event.pressure;
-  lcd.setCursor(0,2);
-  lcd.print("Pressure:    ");
+  lcd.setCursor(0,3);
+  lcd.print("Pressure:     ");
   lcd.print((int)pressure);
   lcd.print("mb");
   delay(5000);
