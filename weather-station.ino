@@ -16,6 +16,14 @@ const int DHTPIN = 2;
 const int rs = 4, en = 3, d4 = 5, d5 = 6, d6 = 7, d7 = 10;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+String formatTempForLCD(int temperature) {
+  String formattedTemp = (String)temperature;
+  if(temperature <10) {
+    formattedTemp = " " + formattedTemp;
+  }
+  return formattedTemp;
+}
+
 void setup() {
   // Start the display. We specify 20 columns by 4 rows as the library also supports other sizes of diaply
   lcd.begin(20, 4);
@@ -35,7 +43,7 @@ void loop() {
   uint8_t readings=read_dht(temperature, humidity, DHTPIN, DHT22);
   lcd.setCursor(0,0);
   lcd.print("Temperature:  ");
-  lcd.print((int)temperature);
+  lcd.print(formatTempForLCD((int)temperature));
   lcd.print("C");
   //Calculate the maximum and minimum.
   if(temperature > maximum) {
@@ -46,10 +54,10 @@ void loop() {
   }
   lcd.setCursor(0,1);
   lcd.print("Max: ");
-  lcd.print(int(maximum));
+  lcd.print(formatTempForLCD((int)maximum));
   lcd.print("C ");
   lcd.print("Min: ");
-  lcd.print((int)minimum);
+  lcd.print(formatTempForLCD((int)minimum));
   lcd.print("C");
   // Now the humidity
   lcd.setCursor(0,2);
